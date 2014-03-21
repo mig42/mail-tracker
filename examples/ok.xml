@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SeguimientoLocalizadorEnviosResponse xmlns="WSlocalizadorEnvios">
+  <SeguimientoLocalizadorEnviosResult>
+    <Envio xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="">
+      <Codigo>
+        <CodigoEnvio>RC358064161CN</CodigoEnvio>
+        <CodigoInternoApp/>
+      </Codigo>
+      <Duplicado>False</Duplicado>
+      <Producto>YY</Producto>
+      <CP/>
+      <Provincia/>
+      <Pais/>
+      <NumGiro/>
+      <CodError>0</CodError>
+      <DesError>0</DesError>
+      <ListaEventos>
+        <Evento>
+          <Fecha>19/03/2014</Fecha>
+          <Hora>16:55:00</Hora>
+          <CodigoEventoApp>A0000_OOA</CodigoEventoApp>
+          <CodigoMotivoApp/>
+          <CodigoEvento>A-E-001</CodigoEvento>
+          <Evento>Admisión en oficina</Evento>
+          <CodigoMotivo/>
+          <Motivo/>
+          <CodigoDespacho/>
+          <Unidad>528032</Unidad>
+          <Codired/>
+          <Provincia/>
+          <Pais/>
+          <Link/>
+          <DescripcionLink/>
+          <DescripcionWeb>Admitido</DescripcionWeb>
+          <CodigoWeb>1</CodigoWeb>
+        </Evento>
+        <Evento>
+          <Fecha>20/03/2014</Fecha>
+          <Hora>14:52:00</Hora>
+          <CodigoEventoApp>A1700_OCS</CodigoEventoApp>
+          <CodigoMotivoApp/>
+          <CodigoEvento>C-E-001</CodigoEvento>
+          <Evento>Salida de oficina de cambio origen</Evento>
+          <CodigoMotivo/>
+          <Motivo/>
+          <CodigoDespacho/>
+          <Unidad>GUANGZHOU</Unidad>
+          <Codired>CNCANA</Codired>
+          <Provincia/>
+          <Pais>CHINA</Pais>
+          <Link/>
+          <DescripcionLink/>
+          <DescripcionWeb>Salida de la Oficina Internacional de origen</DescripcionWeb>
+          <CodigoWeb>14</CodigoWeb>
+        </Evento>
+      </ListaEventos>
+    </Envio>
+  </SeguimientoLocalizadorEnviosResult>
+</SeguimientoLocalizadorEnviosResponse>

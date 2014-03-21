@@ -1,0 +1,18 @@
+<SeguimientoLocalizadorEnviosResponse xmlns="WSlocalizadorEnvios">
+  <SeguimientoLocalizadorEnviosResult>
+    <Envio xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="">
+      <Codigo>
+        <CodigoEnvio>47150014128755</CodigoEnvio>
+        <CodigoInternoApp/>
+      </Codigo>
+      <Duplicado/>
+      <Producto/>
+      <CP/>
+      <Provincia/>
+      <Pais/>
+      <NumGiro/>
+      <CodError>32</CodError>
+      <DesError>Información no disponible</DesError>
+    </Envio>
+  </SeguimientoLocalizadorEnviosResult>
+</SeguimientoLocalizadorEnviosResponse>
