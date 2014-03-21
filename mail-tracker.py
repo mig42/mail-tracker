@@ -1,6 +1,7 @@
 # -*- coding: utf-8 *-*
 
 import sys
+import os.path
 import getopt
 
 class Usage(Exception):
@@ -23,6 +24,7 @@ def main(argv = None):
                 print 'Usage: {0} <file>'.format(argv[0])
                 print "       file: a file containing the tracking numbers, one number per line"
                 return 0
+
 
         print "Hello, world!"
     except Usage, err:
