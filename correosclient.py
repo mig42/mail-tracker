@@ -17,7 +17,7 @@ class CorreosClient:
         separated_data = data.split("##")
         if len(separated_data) < 2:
             return ""
-        return separated_data[1].replace("  <!-- ->", "")
+        return separated_data[1].split("**", 1)[0]
 
     def build_query(self):
         return "{0}?{1}".format(WEB_SERVICE_ENDPOINT, self.build_params())

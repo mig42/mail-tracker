@@ -19,10 +19,10 @@ class CorreosParser:
         if root is None:
             return
 
-        code = get_text(root.find("Codigo"), "CodigoEnvio")
+        code = get_text(root.find("Codigo"), "CodigoEnvio").strip()
         error_code = int(get_text(root, "CodError"))
         if error_code != 0:
-            self._order = [order.NotFoundOrder(code)]
+            self._order = order.NotFoundOrder(code)
             return
 
         sent_order = order.SentOrder(code)
@@ -40,11 +40,11 @@ class CorreosParser:
             province = get_text(xml_event, "Provincia")
             country = get_text(xml_event, "Pais")
             location = event.Location(country, city, province)
-            newEvent = event.Event(date, text, description, location)
+            new_event = event.Event(date, text, description, location)
 
-            sent_order.add_event(newEvent)
+            sent_order.add_event(new_event)
 
-        self._order = [sent_order]
+        self._order = sent_order
 
     def get_order(self):
         return self._order

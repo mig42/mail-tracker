@@ -76,6 +76,7 @@ def get_args_from_file(path):
         line = file.readline()
         while line != "":
             result.append(line)
+            line = file.readline()
         return result
 
 

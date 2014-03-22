@@ -13,12 +13,13 @@ class OrderPrinter:
     def do_print(self, short=False):
         for order in self._orders:
             if not order.exists():
-                print "Order '{0}' does not exist.".format(order.get_code())
+                print "Order '{0}' does not exist.\n".format(order.get_code())
                 continue
 
             print "Order '{0}':".format(order.get_code())
             if len(order.get_events()) == 0:
-                print "  No registered events yet."
+                print "  No registered events yet.\n"
+
                 continue
 
             print_events(order.get_events(), short)
