@@ -11,6 +11,8 @@ USAGE_MESSAGE = \
     """Usage: {0} [OPTION]
     Reads a XML stream from standard input and """
 
+LONG_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+
 
 class Usage(Exception):
     def __init__(self, msg=USAGE_MESSAGE.format(sys.argv[0])):
@@ -82,12 +84,12 @@ def print_head(short=False):
 def print_event(event, short=False):
     if short:
         print u"  {0: <20} | {1}".format(
-            time.strftime("%Y-%M-%d %H:%M:%S", event.get_date()),
+            time.strftime(LONG_DATE_FORMAT, event.get_date()),
             event.get_text())
         return
 
     print u"  {0: <20} | {1: <35} | {2: <50} | {3}".format(
-        time.strftime("%Y-%M-%d %H:%M:%S", event.get_date()),
+        time.strftime(LONG_DATE_FORMAT, event.get_date()),
         event.get_text(),
         event.get_description(),
         event.get_location())
