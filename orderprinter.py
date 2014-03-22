@@ -10,16 +10,17 @@ class OrderPrinter:
     def __init__(self, orders):
         self._orders = orders
 
-    def do_print(self, short=False):
+    def do_print(self, short=False, verbose=True):
         for order in self._orders:
             if not order.exists():
-                print "Order '{0}' does not exist.\n".format(order.get_code())
+                if verbose:
+                    print "Order '{0}' does not exist.\n".format(order.get_code())
                 continue
 
             print "Order '{0}':".format(order.get_code())
             if len(order.get_events()) == 0:
-                print "  No registered events yet.\n"
-
+                if verbose:
+                    print "  No registered events yet.\n"
                 continue
 
             print_events(order.get_events(), short)

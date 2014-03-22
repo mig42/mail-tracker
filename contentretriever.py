@@ -13,7 +13,8 @@ USAGE_MESSAGE = \
     """Usage: {0} <code> | -f <file>
   Queries the correos.es web service to retrieve an order status in XML format"""
 HELP_MESSAGE = """Receives a list of codes as arguments, or a file containing them.
-  -f    Specifies a file in which tracking codes will be found."""
+  -f:   Specifies a file in which tracking codes will be found.
+  -q:   Supresses superfluous output messages."""
 
 
 class Usage(Exception):
@@ -27,12 +28,13 @@ def main(argv=None):
         argv = sys.argv
     try:
         try:
-            opts, args = getopt.getopt(argv[1:], "shf:", ["help", "short"])
+            opts, args = getopt.getopt(argv[1:], "sqhf:", ["help", "short"])
         except getopt.error, msg:
             raise Usage(msg)
 
         short = False
         code_file = None
+        verbose = True
         for key, value in opts:
             if key == "-h" or key == "--help":
                 print USAGE_MESSAGE.format(argv[0])
@@ -40,6 +42,8 @@ def main(argv=None):
                 return 0
             if key == "-s" or key == "--short":
                 short = True
+            if key == "-q":
+                verbose = False
             if key == "-f":
                 if value is None or value == "":
                     raise Usage("No file was specified.")
@@ -49,14 +53,22 @@ def main(argv=None):
 
         codes = []
         for code in get_args(args, code_file):
+            if verbose:
+                print "Processing {0}...".format(code.strip())
             client = CorreosClient(code)
 
             parser = CorreosParser(client.query())
-            parser.parse()
-            codes.append(parser.get_order())
+            try:
+                parser.parse()
+                codes.append(parser.get_order())
+            except:
+                pass
+
+        if verbose:
+            print ""
 
         printer = OrderPrinter(codes)
-        printer.do_print(short)
+        printer.do_print(short, verbose)
 
     except Usage, err:
         print >> sys.stderr, err.msg
