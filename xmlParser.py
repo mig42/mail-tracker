@@ -15,7 +15,13 @@ class XmlParser:
     def parse(self):
         root = ElementTree.fromstring(self._xml_text)
         root = root.find("{WSlocalizadorEnvios}SeguimientoLocalizadorEnviosResult")
+        if root is None:
+            return
+
         root = root.find("Envio")
+        if root is None:
+            return
+
         code = get_text(root.find("Codigo"), "CodigoEnvio")
         error_code = int(get_text(root, "CodError"))
         if error_code != 0:

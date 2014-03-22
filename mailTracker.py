@@ -7,7 +7,9 @@ import time
 import xmlParser
 
 
-USAGE_MESSAGE = "Usage: {0}"
+USAGE_MESSAGE = \
+    """Usage: {0} [OPTION]
+    Reads a XML stream from standard input and """
 
 
 class Usage(Exception):
@@ -25,46 +27,70 @@ def main(argv=None):
         argv = sys.argv
     try:
         try:
-            opts, args = getopt.getopt(argv[1:], "h", ["help"])
+            opts, args = getopt.getopt(argv[1:], "sh", ["help", "short"])
         except getopt.error, msg:
             raise Usage(msg)
 
+        short = False
         for o, a in opts:
-            if o == "-h":
+            if o == "-h" or o == "--help":
                 print USAGE_MESSAGE.format(argv[0])
                 print """
     This program expects XML contents through the standard input."""
                 return 0
+            if o == "-s" or o == "--short":
+                short = True
 
         text = read_all(sys.stdin)
 
         parser = xmlParser.XmlParser(text)
         parser.parse()
 
-        for readOrder in parser.get_orders():
-            if not readOrder.exists():
-                print "Order '{0}' does not exist.".format(readOrder.get_code())
+        for readr_order in parser.get_orders():
+            if not readr_order.exists():
+                print "Order '{0}' does not exist.".format(readr_order.get_code())
                 continue
 
-            print "Order '{0}':".format(readOrder.get_code())
-            if len(readOrder.get_events()) == 0:
+            print "Order '{0}':".format(readr_order.get_code())
+            if len(readr_order.get_events()) == 0:
                 print "  No registered events yet."
                 continue
 
-            print u"  {0: ^20} | {1: ^50} | {2: ^50} | {3}".format(
-                u"Date/time", "Status", "Description", "Position"
-            )
-            for event in readOrder.get_events():
-                print u"  {0: <20} | {1: <50} | {2: <50} | {3}".format(
-                    time.strftime("%Y-%M-%d %H:%M:%S", event.get_date()),
-                    event.get_text(),
-                    event.get_description(),
-                    event.get_location())
+            print_events(readr_order.get_events(), short)
 
     except Usage, err:
         print >> sys.stderr, err.msg
         print >> sys.stderr, "for help use --help"
         return 2
+
+
+def print_events(event_list, short=False):
+    print_head(short)
+    for event in event_list:
+        print_event(event, short)
+
+
+def print_head(short=False):
+    if short:
+        print u"  {0: ^20} | {1}".format("Date/time", "Status")
+        return
+
+    print u"  {0: ^20} | {1: ^35} | {2: ^50} | {3}".format(
+        u"Date/time", "Status", "Description", "Position")
+
+
+def print_event(event, short=False):
+    if short:
+        print u"  {0: <20} | {1}".format(
+            time.strftime("%Y-%M-%d %H:%M:%S", event.get_date()),
+            event.get_text())
+        return
+
+    print u"  {0: <20} | {1: <35} | {2: <50} | {3}".format(
+        time.strftime("%Y-%M-%d %H:%M:%S", event.get_date()),
+        event.get_text(),
+        event.get_description(),
+        event.get_location())
 
 
 if __name__ == "__main__":
