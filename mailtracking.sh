@@ -8,9 +8,18 @@ fi
 while read valor; do
     codigo=`echo $valor | cut -d\# -f1`
     comentario=`echo $valor | cut -d\# -f2`
-    echo "### Pedido [ $codigo ] - [ $comentario ] ###"
+    codigos="$codigos $codigo"
+    # Si no tiene el comentario se muestra el número de tracking
+    if [ ! "$comentario" ]; then
+        comentario=$codigo
+    fi 
+    comentarios="$comentarios $comentario"
 done < $1
-#    curl -k -s --data "numeros=$codigos&numero=$codigo&ecorreo=$2&accion=LocalizaVarios" "https://aplicacionesweb.correos.es/localizadorenvios/track.asp" > /dev/null
+    curl -k -s --data "numeros=$codigos&numero=$codigo&ecorreo=$2&accion=LocalizaVarios" "https://aplicacionesweb.correos.es/localizadorenvios/track.asp" #> /dev/null
 
-echo "Solicitud enviada"
+echo "Solicitud enviada para:"
+
+for comentario in $comentarios;do 
+    echo $comentario
+done
 
