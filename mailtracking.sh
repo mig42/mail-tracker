@@ -9,9 +9,9 @@ while read lectura; do codigo=lectura
 done < "$1"
 
 
-codigos=$(tr '\n' ' ' < $1)
+codigos=$(cut -d '#' -d '\n' |tr '\n' ' ' < $1)
     echo "### Pedido [ $codigos ] ###"
-    curl -k -s --data "numeros=$codigos&numero=$codigo&ecorreo=$2&accion=LocalizaVarios" "https://aplicacionesweb.correos.es/localizadorenvios/track.asp" > /dev/null
+#    curl -k -s --data "numeros=$codigos&numero=$codigo&ecorreo=$2&accion=LocalizaVarios" "https://aplicacionesweb.correos.es/localizadorenvios/track.asp" > /dev/null
 
 echo "Solicitud enviada"
 
