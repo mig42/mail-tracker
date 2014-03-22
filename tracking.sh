@@ -7,7 +7,7 @@ fi
 
 while read linea; do
     codigo=`echo $linea | cut -d\# -f1`
-    comentario=`echo $valor | cut -d\# -f2`
+    comentario=`echo $linea | cut -d\# -f2`
     if [ ! "$comentario" ]; then
         comentario=$codigo
     fi    

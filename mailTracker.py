@@ -51,8 +51,11 @@ def main(argv=None):
                 print "  No registered events yet."
                 continue
 
+            print u"  {0: ^20} | {1: ^50} | {2: ^50} | {3}".format(
+                u"Date/time", "Status", "Description", "Position"
+            )
             for event in readOrder.get_events():
-                print u"  {0} | {1: <50} | {2: <50} | {3}".format(
+                print u"  {0: <20} | {1: <50} | {2: <50} | {3}".format(
                     time.strftime("%Y-%M-%d %H:%M:%S", event.get_date()),
                     event.get_text(),
                     event.get_description(),
