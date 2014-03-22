@@ -7,25 +7,22 @@ import order
 import event
 
 
-class XmlParser:
+class CorreosParser:
     def __init__(self, xml_text):
         self._xml_text = "".join(xml_text).decode('latin_1').encode('utf_8')
-        self._orders = []
+        self._order = None
 
     def parse(self):
         root = ElementTree.fromstring(self._xml_text)
-        root = root.find("{WSlocalizadorEnvios}SeguimientoLocalizadorEnviosResult")
-        if root is None:
-            return
 
-        root = root.find("Envio")
+        root = root.find(".//Envio")
         if root is None:
             return
 
         code = get_text(root.find("Codigo"), "CodigoEnvio")
         error_code = int(get_text(root, "CodError"))
         if error_code != 0:
-            self._orders = [order.NotFoundOrder(code)]
+            self._order = [order.NotFoundOrder(code)]
             return
 
         sent_order = order.SentOrder(code)
@@ -47,10 +44,10 @@ class XmlParser:
 
             sent_order.add_event(newEvent)
 
-        self._orders = [sent_order]
+        self._order = [sent_order]
 
-    def get_orders(self):
-        return self._orders
+    def get_order(self):
+        return self._order
 
 
 def get_text(xml_node, child_name):

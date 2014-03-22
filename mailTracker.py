@@ -2,16 +2,14 @@
 
 import sys
 import getopt
-import time
 
-import xmlParser
+import correosparser
+from orderprinter import OrderPrinter
 
 
 USAGE_MESSAGE = \
     """Usage: {0} [OPTION]
-    Reads a XML stream from standard input and """
-
-LONG_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+  Reads a XML stream from standard input and writes it nicely."""
 
 
 class Usage(Exception):
@@ -45,54 +43,16 @@ def main(argv=None):
 
         text = read_all(sys.stdin)
 
-        parser = xmlParser.XmlParser(text)
+        parser = correosparser.CorreosParser(text)
         parser.parse()
 
-        for readr_order in parser.get_orders():
-            if not readr_order.exists():
-                print "Order '{0}' does not exist.".format(readr_order.get_code())
-                continue
-
-            print "Order '{0}':".format(readr_order.get_code())
-            if len(readr_order.get_events()) == 0:
-                print "  No registered events yet."
-                continue
-
-            print_events(readr_order.get_events(), short)
+        printer = OrderPrinter(parser.get_order())
+        printer.do_print(short)
 
     except Usage, err:
         print >> sys.stderr, err.msg
         print >> sys.stderr, "for help use --help"
         return 2
-
-
-def print_events(event_list, short=False):
-    print_head(short)
-    for event in event_list:
-        print_event(event, short)
-
-
-def print_head(short=False):
-    if short:
-        print u"  {0: ^20} | {1}".format("Date/time", "Status")
-        return
-
-    print u"  {0: ^20} | {1: ^35} | {2: ^50} | {3}".format(
-        u"Date/time", "Status", "Description", "Position")
-
-
-def print_event(event, short=False):
-    if short:
-        print u"  {0: <20} | {1}".format(
-            time.strftime(LONG_DATE_FORMAT, event.get_date()),
-            event.get_text())
-        return
-
-    print u"  {0: <20} | {1: <35} | {2: <50} | {3}".format(
-        time.strftime(LONG_DATE_FORMAT, event.get_date()),
-        event.get_text(),
-        event.get_description(),
-        event.get_location())
 
 
 if __name__ == "__main__":
