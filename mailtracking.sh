@@ -6,6 +6,7 @@ if [ ! -f "$1" ] || [ ! "$2" ]; then
 fi
 
 while read valor; do
+    ultimo_codigo=$codigo
     codigo=`echo $valor | cut -d\# -f1`
     comentario=`echo $valor | cut -d\# -f2`
     codigos="$codigos $codigo"
@@ -15,7 +16,9 @@ while read valor; do
     fi 
     comentarios="$comentarios $comentario"
 done < $1
-    curl -k -s --data "numeros=$codigos&numero=$codigo&ecorreo=$2&accion=LocalizaVarios" "https://aplicacionesweb.correos.es/localizadorenvios/track.asp" #> /dev/null
+accion="LocalizaVarios"
+echo $codigos
+    curl -k -s --data "numeros=$codigos&ecorreo=$2&accion=$accion" "https://aplicacionesweb.correos.es/localizadorenvios/track.asp" #> /dev/null
 
 echo "Solicitud enviada para:"
 
