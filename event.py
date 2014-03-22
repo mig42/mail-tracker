@@ -3,36 +3,38 @@
 
 class Event:
     def __init__(self, date, text, description, location):
-        self.date = date
-        self.text = text
-        self.description = description
-        self.location = location
+        self._date = date
+        self._text = text
+        self._description = description
+        self._location = location
 
     def get_date(self):
-        return self.date
+        return self._date
 
     def get_text(self):
-        return self.text
+        return self._text
 
     def get_description(self):
-        return self.description
+        return self._description
 
     def get_location(self):
-        return self.location
+        return self._location
 
 
 class Location:
-    def __init__(self, country="", city="", province=""):
-        self.country = country
-        self.city = city
-        self.province = province
+    def __init__(self, country, city, province):
+        self._country = country
+        self._city = city
+        self._province = province
 
     def __str__(self):
-        result = [self.country]
-        if self.province != "":
-            result.append(self.province)
-        if self.city != "":
-            result.append(self.city)
+        result = []
+        if self._country != "" and self._country is not None:
+            result.append(self._country)
+        if self._province != "" and self._province is not None:
+            result.append(self._province)
+        if self._city != "" and self._city is not None:
+            result.append(self._city)
 
         result.reverse()
 

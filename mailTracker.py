@@ -2,7 +2,10 @@
 
 import sys
 import getopt
+import time
+
 import xmlParser
+
 
 USAGE_MESSAGE = "Usage: {0}"
 
@@ -37,6 +40,23 @@ def main(argv=None):
 
         parser = xmlParser.XmlParser(text)
         parser.parse()
+
+        for readOrder in parser.get_orders():
+            if not readOrder.exists():
+                print "Order '{0}' does not exist.".format(readOrder.get_code())
+                continue
+
+            print "Order '{0}':".format(readOrder.get_code())
+            if len(readOrder.get_events()) == 0:
+                print "  No registered events yet."
+                continue
+
+            for event in readOrder.get_events():
+                print u"  {0} | {1: <50} | {2: <50} | {3}".format(
+                    time.strftime("%Y-%M-%d %H:%M:%S", event.get_date()),
+                    event.get_text(),
+                    event.get_description(),
+                    event.get_location())
 
     except Usage, err:
         print >> sys.stderr, err.msg
