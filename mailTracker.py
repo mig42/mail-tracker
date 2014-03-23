@@ -40,6 +40,8 @@ def main(argv=None):
                 return 0
             if o == "-s" or o == "--short":
                 short = True
+            if o == "-m" or o == "--mail":
+                mail = True
 
         text = read_all(sys.stdin)
 
