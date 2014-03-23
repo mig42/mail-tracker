@@ -7,6 +7,7 @@ import os.path
 from correosclient import CorreosClient
 from correosparser import CorreosParser
 from orderprinter import OrderPrinter
+from codeparser import CodeParser
 
 
 USAGE_MESSAGE = \
@@ -54,10 +55,10 @@ def main(argv=None):
         codes = []
         for code in get_args(args, code_file):
             if verbose:
-                print "Processing {0}...".format(code.strip())
+                print "Processing {0}...".format(code.get_identifier())
             client = CorreosClient(code)
 
-            parser = CorreosParser(client.query())
+            parser = CorreosParser(client.query(), code)
             try:
                 parser.parse()
                 codes.append(parser.get_order())
@@ -78,8 +79,11 @@ def main(argv=None):
 
 def get_args(args, path):
     if path is not None:
-        return get_args_from_file(path)
-    return args
+        lines = get_args_from_file(path)
+    else:
+        lines = args
+    parser = CodeParser(lines)
+    return parser.get_codes()
 
 
 def get_args_from_file(path):

@@ -23,4 +23,4 @@ class CorreosClient:
         return "{0}?{1}".format(WEB_SERVICE_ENDPOINT, self.build_params())
 
     def build_params(self):
-        return {"numero": self._code, "accion": "LocalizaUno"}
+        return {"numero": self._code.get_code(), "accion": "LocalizaUno"}

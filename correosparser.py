@@ -8,8 +8,9 @@ import event
 
 
 class CorreosParser:
-    def __init__(self, xml_text):
+    def __init__(self, xml_text, code):
         self._xml_text = "".join(xml_text).decode('latin_1').encode('utf_8')
+        self._code = code
         self._order = None
 
     def parse(self):
@@ -22,10 +23,10 @@ class CorreosParser:
         code = get_text(root.find("Codigo"), "CodigoEnvio").strip()
         error_code = int(get_text(root, "CodError"))
         if error_code != 0:
-            self._order = order.NotFoundOrder(code)
+            self._order = order.NotFoundOrder(self._code)
             return
 
-        sent_order = order.SentOrder(code)
+        sent_order = order.SentOrder(self._code)
         event_list = root.find("ListaEventos")
         for xml_event in event_list.iter("Evento"):
             if len(xml_event) == 0:
