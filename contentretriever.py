@@ -51,6 +51,11 @@ def main(argv=None):
                 if not os.path.isfile(value):
                     raise Usage("File {0} couldn't be found.".format(value))
                 code_file = value
+             if key == "-m" or key == "--mail":
+                if value is None or value == "":
+                    raise Usage("No mail was specified.")
+                mail = value
+
 
         codes = []
         for code in get_args(args, code_file):
