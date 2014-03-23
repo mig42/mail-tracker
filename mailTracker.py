@@ -46,8 +46,8 @@ def main(argv=None):
         parser = correosparser.CorreosParser(text)
         parser.parse()
 
-        printer = OrderPrinter(parser.get_order())
-        printer.do_print(short)
+        printer = OrderPrinter(parser.get_order(), short)
+        printer.do_print()
 
     except Usage, err:
         print >> sys.stderr, err.msg

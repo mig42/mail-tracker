@@ -67,8 +67,8 @@ def main(argv=None):
         if verbose:
             print ""
 
-        printer = OrderPrinter(codes)
-        printer.do_print(short, verbose)
+        printer = OrderPrinter(codes, short, verbose)
+        printer.do_print()
 
     except Usage, err:
         print >> sys.stderr, err.msg
