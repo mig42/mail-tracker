@@ -78,10 +78,11 @@ def main(argv=None):
             printer = OrderPrinter(codes, short, verbose)
             printer.do_print()
         else:
-            file = codecs.open("/tmp/file.txt","w", "utf-8")
-            printer = OrderMailSender (codes, file, short, verbose)
+            with codecs.open("/tmp/file.txt","w", "utf-8") as file:
+                file.write(" ")
+            printer = OrderMailSender (codes, mail, short, verbose)
             printer.do_print()
-            file.close()
+            printer.do_send_mail()
 
 
 
