@@ -12,11 +12,12 @@ from codeparser import CodeParser
 from ordermailsender import OrderMailSender
 
 USAGE_MESSAGE = \
-    """Usage: {0} <code> | -f <file>
+    """Usage: {0} <code> | -f <file> | [-m | --mail <mail>]
   Queries the correos.es web service to retrieve an order status in XML format"""
 HELP_MESSAGE = """Receives a list of codes as arguments, or a file containing them.
   -f:   Specifies a file in which tracking codes will be found.
-  -q:   Supresses superfluous output messages."""
+  -q:   Supresses superfluous output messages.
+  -m:   Specifies a mail to send tracking information"""
 
 
 class Usage(Exception):
@@ -37,6 +38,7 @@ def main(argv=None):
         short = False
         code_file = None
         verbose = True
+        mail = ""
         for key, value in opts:
             if key == "-h" or key == "--help":
                 print USAGE_MESSAGE.format(argv[0])
