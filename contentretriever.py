@@ -3,12 +3,13 @@
 import sys
 import getopt
 import os.path
+import codecs
 
 from correosclient import CorreosClient
 from correosparser import CorreosParser
 from orderprinter import OrderPrinter
 from codeparser import CodeParser
-
+from ordermailsender import OrderMailSender
 
 USAGE_MESSAGE = \
     """Usage: {0} <code> | -f <file>
@@ -29,7 +30,7 @@ def main(argv=None):
         argv = sys.argv
     try:
         try:
-            opts, args = getopt.getopt(argv[1:], "sqhf:", ["help", "short"])
+            opts, args = getopt.getopt(argv[1:], "sqhf:m:", ["help", "short","mail"])
         except getopt.error, msg:
             raise Usage(msg)
 
@@ -51,7 +52,7 @@ def main(argv=None):
                 if not os.path.isfile(value):
                     raise Usage("File {0} couldn't be found.".format(value))
                 code_file = value
-             if key == "-m" or key == "--mail":
+            if key == "-m" or key == "--mail":
                 if value is None or value == "":
                     raise Usage("No mail was specified.")
                 mail = value
@@ -73,8 +74,16 @@ def main(argv=None):
         if verbose:
             print ""
 
-        printer = OrderPrinter(codes, short, verbose)
-        printer.do_print()
+        if mail == "":
+            printer = OrderPrinter(codes, short, verbose)
+            printer.do_print()
+        else:
+            file = codecs.open("/tmp/file.txt","w", "utf-8")
+            printer = OrderMailSender (codes, file, short, verbose)
+            printer.do_print()
+            file.close()
+
+
 
     except Usage, err:
         print >> sys.stderr, err.msg
