@@ -27,7 +27,7 @@ class OrderMailSender:
                 self.print_order_line("Order '{0}' does not exist.\n", order.get_identifier())
                 continue
             with codecs.open("/tmp/file.txt","a", "utf-8") as self._file:
-                self._file.write("Order '{0}':".format(order.get_identifier()))
+                self._file.write("Order '{0}':\n".format(order.get_identifier()))
             if len(order.get_events()) == 0:
                 self.print_order_line("  No registered events yet.\n")
                 continue
@@ -49,21 +49,21 @@ class OrderMailSender:
     def print_head(self):
         if self._short:
             with codecs.open("/tmp/file.txt","a", "utf-8") as self._file:
-                self._file.write( u"  {0: ^20} | {1}".format("Date/time", "Status"))
+                self._file.write( u"  {0: ^20} | {1}\n".format("Date/time", "Status"))
             return
         with codecs.open("/tmp/file.txt","a", "utf-8") as self._file:
-            self._file.write( u"  {0: ^20} | {1: ^35} | {2: ^50} | {3}".format(
+            self._file.write( u"  {0: ^20} | {1: ^35} | {2: ^50} | {3}\n".format(
                 u"Date/time", "Status", "Description", "Position"))
 
     def print_event(self, event):
         if self._short:
             with codecs.open("/tmp/file.txt","a", "utf-8") as self._file:
-                self._file.write( u"  {0: <20} | {1}".format(
+                self._file.write( u"  {0: <20} | {1}\n".format(
                     time.strftime(LONG_DATE_FORMAT, event.get_date()),
                     event.get_text()))
             return
         with codecs.open("/tmp/file.txt","a", "utf-8") as self._file:
-            self._file.write( u"  {0: <20} | {1: <35} | {2: <50} | {3}".format(
+            self._file.write( u"  {0: <20} | {1: <35} | {2: <50} | {3}\n".format(
                     time.strftime(LONG_DATE_FORMAT, event.get_date()),
                     event.get_text(),
                     event.get_description(),
