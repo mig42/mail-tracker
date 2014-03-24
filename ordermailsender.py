@@ -77,12 +77,14 @@ class OrderMailSender:
             #self._msg['Subject'] = Header('Order info','utf-8')
             print self._msg
         unicode(self._msg)
+        server = smtplib.SMTP('smtp.gmail.com:587')
         try:
-            server = smtplib.SMTP('smtp.gmail.com:587')
             server.starttls()
             server.login(self._username,self._password)
             server.sendmail('mailtrackerpython@gmail.com', self._toaddrs, self._msg.encode('utf-8'))
-            server.quit()
             print "Successfully sent email"
         except SMTPException:
             print "Error: unable to send email"
+        finally:
+            if server is not None:
+                server.quit()
