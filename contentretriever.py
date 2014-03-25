@@ -81,7 +81,6 @@ def main(argv=None):
             printer.do_print()
         else:
             printer = OrderMailSender (codes, mail, short, verbose)
-            printer.do_print()
             printer.do_send_mail()
 
 

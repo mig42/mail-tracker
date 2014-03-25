@@ -27,7 +27,7 @@ class OrderMailSender:
         self._file.close()
         self._file = codecs.open(self._filename,'w+b',encoding='utf-8')
 
-    def do_print(self):
+    def do_send_mail(self):
         for order in self._orders:
             if not order.exists():
                 self.print_order_line("Order '{0}' does not exist.\n", order.get_identifier())
@@ -39,6 +39,25 @@ class OrderMailSender:
                 continue
 
             self.print_events(order.get_events())
+
+        self._file.seek(0)
+        self._msg = 'Subject: Order info\n\n'
+        self._msg+=  self._file.read()
+        self._file.close()
+        os.unlink(self._filename)
+        print self._msg
+        unicode(self._msg)
+        server = smtplib.SMTP('smtp.gmail.com:587')
+        try:
+            server.starttls()
+            server.login(self._username,self._password)
+            server.sendmail('mailtrackerpython@gmail.com', self._toaddrs, self._msg.encode('utf-8'))
+            print "Successfully sent email"
+        except SMTPException:
+            print "Error: unable to send email"
+        finally:
+            if server is not None:
+                server.quit()
 
     def print_order_line(self, text, *args):
         if not self._verbose:
@@ -71,22 +90,3 @@ class OrderMailSender:
                 event.get_location()))
 
 
-    def do_send_mail(self):
-        self._file.seek(0)
-        self._msg = 'Subject: Order info\n\n'
-        self._msg+=  self._file.read()
-        self._file.close()
-        os.unlink(self._filename)
-        print self._msg
-        unicode(self._msg)
-        server = smtplib.SMTP('smtp.gmail.com:587')
-        try:
-            server.starttls()
-            server.login(self._username,self._password)
-            server.sendmail('mailtrackerpython@gmail.com', self._toaddrs, self._msg.encode('utf-8'))
-            print "Successfully sent email"
-        except SMTPException:
-            print "Error: unable to send email"
-        finally:
-            if server is not None:
-                server.quit()
