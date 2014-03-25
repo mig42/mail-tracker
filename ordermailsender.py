@@ -6,8 +6,8 @@ import codecs
 import tempfile
 import os
 
-from email.header import Header
-from email.message import Message
+from settings import Settings
+
 
 LONG_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
@@ -19,8 +19,13 @@ class OrderMailSender:
         self._orders = orders
         self._short = short
         self._verbose = verbose
-        self._username = 'mailtrackerpython'
-        self._password = 'oyapulpo'
+
+        # Read settings from settings.cfg
+        settings = Settings()
+
+        self._smtp = settings.smtp_server
+        self._username = settings.username
+        self._password = settings.password
         self._toaddrs = [mail]
         self._file = tempfile.NamedTemporaryFile(delete=False)
         self._filename = self._file.name
@@ -48,11 +53,11 @@ class OrderMailSender:
         if self._verbose:
             print self._msg
         unicode(self._msg)
-        server = smtplib.SMTP('smtp.gmail.com:587')
+        server = smtplib.SMTP(self._smtp)
         try:
             server.starttls()
             server.login(self._username,self._password)
-            server.sendmail('mailtrackerpython@gmail.com', self._toaddrs, self._msg.encode('utf-8'))
+            server.sendmail('mail-tracker', self._toaddrs, self._msg.encode('utf-8'))
             print "Successfully sent email"
         except SMTPException:
             print "Error: unable to send email"

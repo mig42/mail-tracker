@@ -3,13 +3,14 @@
 import sys
 import getopt
 import os.path
-import codecs
+
 
 from correosclient import CorreosClient
 from correosparser import CorreosParser
 from orderprinter import OrderPrinter
 from codeparser import CodeParser
 from ordermailsender import OrderMailSender
+
 
 USAGE_MESSAGE = \
     """Usage: {0} <code> | -f <file> | [-m | --mail <mail>]
