@@ -3,6 +3,8 @@
 import time
 import smtplib
 import codecs
+import tempfile
+import os
 
 from email.header import Header
 from email.message import Message
@@ -20,14 +22,18 @@ class OrderMailSender:
         self._username = 'mailtrackerpython'
         self._password = 'oyapulpo'
         self._toaddrs = [mail]
+        self._file = tempfile.NamedTemporaryFile(delete=False)
+        self._filename = self._file.name
+        self._file.close()
+        self._file = codecs.open(self._filename,'w+b',encoding='utf-8')
 
     def do_print(self):
         for order in self._orders:
             if not order.exists():
                 self.print_order_line("Order '{0}' does not exist.\n", order.get_identifier())
                 continue
-            with codecs.open("/tmp/file.txt","a", "utf-8") as self._file:
-                self._file.write("Order '{0}':\n".format(order.get_identifier()))
+
+            self._file.write(u"Order '{0}':\n".format(order.get_identifier()))
             if len(order.get_events()) == 0:
                 self.print_order_line("  No registered events yet.\n")
                 continue
@@ -37,8 +43,7 @@ class OrderMailSender:
     def print_order_line(self, text, *args):
         if not self._verbose:
             return
-        with codecs.open("/tmp/file.txt","a", "utf-8") as self._file:
-            self._file.write( text.format(*args))
+        self._file.write( text.format(*args))
 
     def print_events(self, event_list, ):
         self.print_head()
@@ -48,34 +53,31 @@ class OrderMailSender:
 
     def print_head(self):
         if self._short:
-            with codecs.open("/tmp/file.txt","a", "utf-8") as self._file:
-                self._file.write( u"  {0: ^20} | {1}\n".format("Date/time", "Status"))
+            self._file.write( u"  {0: ^20} | {1}\n".format("Date/time", "Status"))
             return
-        with codecs.open("/tmp/file.txt","a", "utf-8") as self._file:
-            self._file.write( u"  {0: ^20} | {1: ^35} | {2: ^50} | {3}\n".format(
-                u"Date/time", "Status", "Description", "Position"))
+        self._file.write( u"  {0: ^20} | {1: ^35} | {2: ^50} | {3}\n".format(
+            "Date/time", "Status", "Description", "Position"))
 
     def print_event(self, event):
         if self._short:
-            with codecs.open("/tmp/file.txt","a", "utf-8") as self._file:
-                self._file.write( u"  {0: <20} | {1}\n".format(
-                    time.strftime(LONG_DATE_FORMAT, event.get_date()),
-                    event.get_text()))
+            self._file.write( u"  {0: <20} | {1}\n".format(
+                time.strftime(LONG_DATE_FORMAT, event.get_date()),
+                event.get_text()))
             return
-        with codecs.open("/tmp/file.txt","a", "utf-8") as self._file:
-            self._file.write( u"  {0: <20} | {1: <35} | {2: <50} | {3}\n".format(
-                    time.strftime(LONG_DATE_FORMAT, event.get_date()),
-                    event.get_text(),
-                    event.get_description(),
-                    event.get_location()))
+        self._file.write( u"  {0: <20} | {1: <35} | {2: <50} | {3}\n".format(
+                time.strftime(LONG_DATE_FORMAT, event.get_date()),
+                event.get_text(),
+                event.get_description(),
+                event.get_location()))
 
 
     def do_send_mail(self):
-        with codecs.open("/tmp/file.txt","r", "utf-8") as self._file:
-            self._msg = 'Subject: Order info\n\n'
-            self._msg+=  self._file.read()
-            #self._msg['Subject'] = Header('Order info','utf-8')
-            print self._msg
+        self._file.seek(0)
+        self._msg = 'Subject: Order info\n\n'
+        self._msg+=  self._file.read()
+        self._file.close()
+        os.unlink(self._filename)
+        print self._msg
         unicode(self._msg)
         server = smtplib.SMTP('smtp.gmail.com:587')
         try:
