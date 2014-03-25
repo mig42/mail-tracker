@@ -45,7 +45,8 @@ class OrderMailSender:
         self._msg+=  self._file.read()
         self._file.close()
         os.unlink(self._filename)
-        print self._msg
+        if self._verbose:
+            print self._msg
         unicode(self._msg)
         server = smtplib.SMTP('smtp.gmail.com:587')
         try:
