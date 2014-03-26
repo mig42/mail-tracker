@@ -10,7 +10,7 @@ import codecs
 
 from settings import Settings
 
-MESSAGE_FORMAT = "Subject: Orders info\n\n{0}"
+MESSAGE_FORMAT = u"Subject: Orders info\n\n{0}"
 OUTPUT_OK = "Successfully sent email"
 OUTPUT_ERROR = "Error: unable to send email"
 
@@ -35,7 +35,7 @@ class OrderMailSender:
         if self._verbose:
             print message
 
-        self.send_mail(file_name)
+        self.send_mail(message)
 
         os.remove(file_name)
 
