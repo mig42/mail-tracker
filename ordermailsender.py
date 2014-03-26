@@ -42,7 +42,8 @@ class OrderMailSender:
     def write_mail(self, mail_file):
         for order in self._orders:
             if not order.exists():
-                self.print_order_line(mail_file, "Order '{0}' does not exist.\n", order.get_identifier())
+                self.print_order_line(
+                    mail_file, "Order '{0}' does not exist.\n", order.get_identifier())
                 continue
 
             mail_file.write(u"Order '{0}':\n".format(order.get_identifier()).encode("utf-8"))
