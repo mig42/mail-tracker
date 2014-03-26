@@ -1,9 +1,7 @@
 # -*- coding: utf-8 *-*
 
 import time
-
-
-LONG_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+import constants
 
 
 class OrderPrinter:
@@ -12,7 +10,7 @@ class OrderPrinter:
         self._short = short
         self._verbose = verbose
 
-    def do_print(self):
+    def flush_output(self):
         for order in self._orders:
             if not order.exists():
                 self.print_order_line("Order '{0}' does not exist.\n", order.get_identifier())
@@ -47,12 +45,12 @@ class OrderPrinter:
     def print_event(self, event):
         if self._short:
             print u"  {0: <20} | {1}".format(
-                time.strftime(LONG_DATE_FORMAT, event.get_date()),
+                time.strftime(constants.LONG_DATE_FORMAT, event.get_date()),
                 event.get_text())
             return
 
         print u"  {0: <20} | {1: <35} | {2: <50} | {3}".format(
-            time.strftime(LONG_DATE_FORMAT, event.get_date()),
+            time.strftime(constants.LONG_DATE_FORMAT, event.get_date()),
             event.get_text(),
             event.get_description(),
             event.get_location())

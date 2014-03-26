@@ -32,7 +32,7 @@ def main(argv=None):
         argv = sys.argv
     try:
         try:
-            opts, args = getopt.getopt(argv[1:], "sqhf:m:", ["help", "short","mail"])
+            opts, args = getopt.getopt(argv[1:], "sqhf:m:", ["help", "short", "mail"])
         except getopt.error, msg:
             raise Usage(msg)
 
@@ -60,7 +60,6 @@ def main(argv=None):
                     raise Usage("No mail was specified.")
                 mail = value
 
-
         codes = []
         for code in get_args(args, code_file):
             if verbose:
@@ -79,12 +78,9 @@ def main(argv=None):
 
         if mail == "":
             printer = OrderPrinter(codes, short, verbose)
-            printer.do_print()
         else:
-            printer = OrderMailSender (codes, mail, short, verbose)
-            printer.do_send_mail()
-
-
+            printer = OrderMailSender(codes, mail, short, verbose)
+        printer.flush_output()
 
     except Usage, err:
         print >> sys.stderr, err.msg
