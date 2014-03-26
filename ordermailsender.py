@@ -16,14 +16,14 @@ OUTPUT_ERROR = "Error: unable to send email"
 
 
 class OrderMailSender:
-    def __init__(self, orders, mail, short=False, verbose=True):
+    def __init__(self, orders, mails, short=False, verbose=True):
         self._orders = orders
         self._short = short
         self._verbose = verbose
 
         self._settings = Settings(constants.SETTINGS_FILE)
 
-        self._toaddrs = [mail]
+        self._toaddrs = mails
 
     def flush_output(self):
         with tempfile.NamedTemporaryFile(delete=False) as mail_file:

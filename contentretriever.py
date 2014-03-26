@@ -79,7 +79,7 @@ def main(argv=None):
         if mail == "":
             printer = OrderPrinter(codes, short, verbose)
         else:
-            printer = OrderMailSender(codes, mail, short, verbose)
+            printer = OrderMailSender(codes, parse_addresses(mail), short, verbose)
         printer.flush_output()
 
     except Usage, err:
@@ -106,6 +106,8 @@ def get_args_from_file(path):
             line = file.readline()
         return result
 
+def parse_addresses(email_string):
+    return email_string.replace(" ", "").split(",")
 
 if __name__ == "__main__":
     sys.exit(main())
