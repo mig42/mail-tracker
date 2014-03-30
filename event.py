@@ -22,7 +22,7 @@ class Event:
 
 
 class Location:
-    def __init__(self, country, city, province):
+    def __init__(self, country, city, province=""):
         self._country = country
         self._city = city
         self._province = province

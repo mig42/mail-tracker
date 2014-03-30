@@ -4,8 +4,8 @@ import sys
 import getopt
 import os.path
 
-
 from correosclient import CorreosClient
+from netherlandspostclient import NetherlandsPostClient
 from orderprinter import OrderPrinter
 from codeparser import CodeParser
 from ordermailsender import OrderMailSender
@@ -18,6 +18,8 @@ HELP_MESSAGE = """Receives a list of codes as arguments, or a file containing th
   -f:   Specifies a file in which tracking codes will be found.
   -q:   Supresses superfluous output messages.
   -m:   Specifies a mail to send tracking information"""
+
+clients = [CorreosClient(), NetherlandsPostClient()]
 
 
 class Usage(Exception):
@@ -59,24 +61,22 @@ def main(argv=None):
                     raise Usage("No mail was specified.")
                 mail = value
 
-        codes = []
+        orders = []
         for code in get_args(args, code_file):
             if verbose:
                 print "Processing {0}...".format(code.get_identifier())
-            client = CorreosClient()
             try:
-                order = client.get_order(code)
-                codes.append(order)
+                orders.append(get_order(code))
             except:
-                pass
+                raise
 
         if verbose:
             print ""
 
         if mail == "":
-            printer = OrderPrinter(codes, short, verbose)
+            printer = OrderPrinter(orders, short, verbose)
         else:
-            printer = OrderMailSender(codes, parse_addresses(mail), short, verbose)
+            printer = OrderMailSender(orders, parse_addresses(mail), short, verbose)
         printer.flush_output()
 
     except Usage, err:
@@ -103,8 +103,19 @@ def get_args_from_file(path):
             line = file.readline()
         return result
 
+
 def parse_addresses(email_string):
     return email_string.replace(" ", "").split(",")
+
+
+def get_order(code):
+    order = None
+    for client in clients:
+        order = client.get_order(code)
+        if order.exists():
+            return order
+    return order
+
 
 if __name__ == "__main__":
     sys.exit(main())
