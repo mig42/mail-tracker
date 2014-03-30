@@ -6,7 +6,6 @@ import os.path
 
 
 from correosclient import CorreosClient
-from correosparser import CorreosParser
 from orderprinter import OrderPrinter
 from codeparser import CodeParser
 from ordermailsender import OrderMailSender
@@ -64,12 +63,10 @@ def main(argv=None):
         for code in get_args(args, code_file):
             if verbose:
                 print "Processing {0}...".format(code.get_identifier())
-            client = CorreosClient(code)
-
-            parser = CorreosParser(client.query(), code)
+            client = CorreosClient()
             try:
-                parser.parse()
-                codes.append(parser.get_order())
+                order = client.get_order(code)
+                codes.append(order)
             except:
                 pass
 
