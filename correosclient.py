@@ -1,17 +1,29 @@
 # -*- coding: utf-8 *-*
 
+import sys
 from urllib import urlencode
 from urllib2 import urlopen
+import time
+import xml.etree.ElementTree as ElementTree
+
+import order
+import event
 
 WEB_SERVICE_ENDPOINT = "https://aplicacionesweb.correos.es/localizadorenvios/track.asp"
 
 
 class CorreosClient:
-    def __init__(self, code):
-        self._code = code
+    def __init__(self):
+        self._parser = CorreosParser()
 
-    def query(self):
-        params = urlencode(self.build_params())
+    def get_order(self, code):
+        content = self.query(code.get_code())
+        if content is None or content == "":
+            return None
+        return self._parser.parse(content, code)
+
+    def query(self, code):
+        params = urlencode(self.build_params(code))
         response = urlopen(WEB_SERVICE_ENDPOINT, params)
         data = response.read()
         separated_data = data.split("##")
@@ -19,8 +31,58 @@ class CorreosClient:
             return ""
         return separated_data[1].split("**", 1)[0]
 
-    def build_query(self):
-        return "{0}?{1}".format(WEB_SERVICE_ENDPOINT, self.build_params())
+    def build_params(self, code):
+        return {"numero": code, "accion": "LocalizaUno"}
 
-    def build_params(self):
-        return {"numero": self._code.get_code(), "accion": "LocalizaUno"}
+
+class CorreosParser:
+    def __init__(self):
+        pass
+
+    def parse(self, xml_text, code):
+        _xml_text = "".join(xml_text).decode('latin_1').encode('utf_8')
+        root = ElementTree.fromstring(_xml_text)
+
+        root = root.find(".//Envio")
+        if root is None:
+            return
+
+        found_code = get_text(root.find("Codigo"), "CodigoEnvio").strip()
+
+        if found_code != code.get_code():
+            print >> sys.stderr,\
+                "Code mismatch: expected '{0}', found '{1}'.".format(code.get_code(), found_code)
+            return order.NotFoundOrder(code)
+
+        error_code = int(get_text(root, "CodError"))
+        if error_code != 0:
+            return order.NotFoundOrder(code)
+
+        sent_order = order.SentOrder(code)
+        event_list = root.find("ListaEventos")
+        for xml_event in event_list.iter("Evento"):
+            if len(xml_event) == 0:
+                continue
+            date_string = get_text(xml_event, "Fecha")
+            time_string = get_text(xml_event, "Hora")
+            date = time.strptime(date_string + " " + time_string, "%d/%m/%Y %H:%M:%S")
+            text = get_text(xml_event, "Evento")
+            description = get_text(xml_event, "DescripcionWeb")
+
+            city = get_text(xml_event, "Unidad")
+            province = get_text(xml_event, "Provincia")
+            country = get_text(xml_event, "Pais")
+            location = event.Location(country, city, province)
+            new_event = event.Event(date, text, description, location)
+
+            sent_order.add_event(new_event)
+
+        return sent_order
+
+
+def get_text(xml_node, child_name):
+    child_node = xml_node.find(child_name)
+    if child_node is None:
+        return ""
+    return child_node.text
+
