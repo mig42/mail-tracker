@@ -11,9 +11,9 @@ A simple application to retrieve delivery tracking information from post compani
 
 Several options are available using the command line:
     -h, --help            show this help message and exit
-    -f <file>             specifies a file in which tracking codes will be found.
+    -f FILE             specifies a file in which tracking codes will be found.
     -q                    supresses superfluous output messages.
-    -m, --mail <mail1,mail2,...>
+    -m MAIL_1,MAIL_2,..., --mail=MAIL_1,MAIL_2,...
                           specifies a mail to send tracking information
     -l, --last-event      just print last order event
 
