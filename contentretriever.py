@@ -12,12 +12,17 @@ from ordermailsender import OrderMailSender
 
 
 USAGE_MESSAGE = \
-    """Usage: {0} <code> | -f <file> | [-m | --mail <mail>]
-  Queries the correos.es web service to retrieve an order status in XML format"""
+    """Usage: {0} [CODE]... [OPTION]...
+  Queries post companies web services to retrieve orders status """
 HELP_MESSAGE = """Receives a list of codes as arguments, or a file containing them.
-  -f:   Specifies a file in which tracking codes will be found.
-  -q:   Supresses superfluous output messages.
-  -m:   Specifies a mail to send tracking information"""
+    -f <file>
+        Specifies a file in which tracking codes will be found.
+    -q
+        Supresses superfluous output messages.
+    -m, --mail <mail1,mail2,...>:
+        Specifies a mail to send tracking information
+    -l, --last-event
+        Just print last order event"""
 
 clients = [CorreosClient(), NetherlandsPostClient()]
 
