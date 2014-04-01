@@ -32,7 +32,7 @@ def main(argv=None):
         argv = sys.argv
     try:
         try:
-            opts, args = getopt.getopt(argv[1:], "sqhf:m:", ["help", "short", "mail"])
+            opts, args = getopt.getopt(argv[1:], "sqhf:m:l", ["help", "short", "mail","last-event"])
         except getopt.error, msg:
             raise Usage(msg)
 
@@ -40,6 +40,8 @@ def main(argv=None):
         code_file = None
         verbose = True
         mail = ""
+        last_event = False
+
         for key, value in opts:
             if key == "-h" or key == "--help":
                 print USAGE_MESSAGE.format(argv[0])
@@ -59,6 +61,8 @@ def main(argv=None):
                 if value is None or value == "":
                     raise Usage("No mail was specified.")
                 mail = value
+            if key == "-l" or key == "--last-event":
+                last_event = True
 
         orders = []
         for code in get_args(args, code_file):
@@ -79,9 +83,9 @@ def main(argv=None):
             print ""
 
         if mail == "":
-            printer = OrderPrinter(orders, short, verbose)
+            printer = OrderPrinter(orders, short, verbose, last_event)
         else:
-            printer = OrderMailSender(orders, parse_addresses(mail), short, verbose)
+            printer = OrderMailSender(orders, parse_addresses(mail), short, verbose, last_event)
         printer.flush_output()
 
     except Usage, err:

@@ -16,10 +16,11 @@ OUTPUT_ERROR = "Error: unable to send email"
 
 
 class OrderMailSender:
-    def __init__(self, orders, mails, short=False, verbose=True):
+    def __init__(self, orders, mails, short=False, verbose=True, last_event=False):
         self._orders = orders
         self._short = short
         self._verbose = verbose
+        self._last_event = last_event
 
         self._settings = Settings(constants.SETTINGS_FILE)
 
@@ -60,8 +61,12 @@ class OrderMailSender:
 
     def print_events(self, mail_file, event_list):
         self.print_head(mail_file)
-        for event in event_list:
-            self.print_event(mail_file, event)
+        if not self._last_event:
+            for event in event_list:
+                self.print_event(mail_file, event)
+        else:
+            self.print_event(mail_file, event_list[-1])
+
 
     def print_head(self, mail_file):
         if self._short:

@@ -5,10 +5,11 @@ import constants
 
 
 class OrderPrinter:
-    def __init__(self, orders, short=False, verbose=True):
+    def __init__(self, orders, short=False, verbose=True, last_event=False):
         self._orders = orders
         self._short = short
         self._verbose = verbose
+        self._last_event = last_event
 
     def flush_output(self):
         for order in self._orders:
@@ -30,8 +31,11 @@ class OrderPrinter:
 
     def print_events(self, event_list, ):
         self.print_head()
-        for event in event_list:
-            self.print_event(event)
+        if not self._last_event:
+            for event in event_list:
+                self.print_event(event)
+        else:
+            self.print_event(event_list[-1])
         print ""
 
     def print_head(self):
