@@ -1,5 +1,6 @@
 # -*- coding: utf-8 *-*
 
+
 import sys
 import time
 import smtplib
@@ -8,7 +9,9 @@ import tempfile
 import os
 import codecs
 
+
 from settings import Settings
+
 
 MESSAGE_FORMAT = u"Subject: Orders info\n\n{0}"
 OUTPUT_OK = "Successfully sent email"
@@ -106,6 +109,3 @@ class OrderMailSender:
     def get_message(self, mail_file_name):
         with codecs.open(mail_file_name, encoding="utf-8") as mail_file:
             return MESSAGE_FORMAT.format(mail_file.read())
-
-
-
