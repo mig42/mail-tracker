@@ -35,4 +35,4 @@ class SentOrder:
         return self._code.get_identifier()
 
     def reorder_events(self):
-        sorted(self._events, key= lambda event: event._date)
+        self._events.sort(key= lambda event: event._date)
