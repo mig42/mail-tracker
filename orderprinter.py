@@ -31,11 +31,12 @@ class OrderPrinter:
 
     def print_events(self, event_list, ):
         self.print_head()
-        if not self._last_event:
-            for event in event_list:
-                self.print_event(event)
-        else:
+        if self._last_event:
             self.print_event(event_list[-1])
+            return
+
+        for event in event_list:
+            self.print_event(event)
         print ""
 
     def print_head(self):

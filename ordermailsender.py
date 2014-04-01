@@ -61,11 +61,12 @@ class OrderMailSender:
 
     def print_events(self, mail_file, event_list):
         self.print_head(mail_file)
-        if not self._last_event:
-            for event in event_list:
-                self.print_event(mail_file, event)
-        else:
+        if self._last_event:
             self.print_event(mail_file, event_list[-1])
+            return
+
+        for event in event_list:
+            self.print_event(mail_file, event)
 
 
     def print_head(self, mail_file):
