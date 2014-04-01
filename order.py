@@ -1,5 +1,5 @@
 # -*- coding: utf-8 *-*
-
+from operator import itemgetter
 
 class NotFoundOrder:
     def __init__(self, code):
@@ -35,4 +35,5 @@ class SentOrder:
     def get_identifier(self):
         return self._code.get_identifier()
 
-
+    def reorder_events(self):
+        sorted(self._events, key= lambda event: event._date)

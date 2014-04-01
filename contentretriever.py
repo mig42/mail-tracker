@@ -10,7 +10,6 @@ from orderprinter import OrderPrinter
 from codeparser import CodeParser
 from ordermailsender import OrderMailSender
 
-
 USAGE_MESSAGE = \
     """Usage: {0} <code> | -f <file> | [-m | --mail <mail>]
   Queries the correos.es web service to retrieve an order status in XML format"""
@@ -69,6 +68,12 @@ def main(argv=None):
                 orders.append(get_order(code))
             except:
                 raise
+
+        for order in orders:
+            if order.exists():
+                order.reorder_events()
+
+
 
         if verbose:
             print ""
