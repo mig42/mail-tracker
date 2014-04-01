@@ -2,11 +2,11 @@
 
 A simple application to retrieve delivery tracking information from post companies.
 
-# Companies supported
+### Companies supported
 * [Correos.es](http://www.correos.es)
 * [GLS](https://www.gls-group.eu)
 
-# Usage
+### Usage
     python contentretriever.py [CODE]... [OPTION]...
 
 Receives a list of codes as arguments, or a file containing them:

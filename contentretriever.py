@@ -14,15 +14,12 @@ from ordermailsender import OrderMailSender
 USAGE_MESSAGE = \
     """Usage: {0} [CODE]... [OPTION]...
   Queries post companies web services to retrieve orders status """
-HELP_MESSAGE = """Receives a list of codes as arguments, or a file containing them.
-    -f <file>
-        Specifies a file in which tracking codes will be found.
-    -q
-        Supresses superfluous output messages.
-    -m, --mail <mail1,mail2,...>:
-        Specifies a mail to send tracking information
-    -l, --last-event
-        Just print last order event"""
+HELP_MESSAGE = """Receives a list of codes as arguments, or a file containing them:
+   -f <file>            Specifies a file in which tracking codes will be found.
+   -q                   Supresses superfluous output messages.
+   -m, --mail <mail1,mail2,...>
+                        Specifies a mail to send tracking information
+   -l, --last-event     Just print last order event"""
 
 clients = [CorreosClient(), NetherlandsPostClient()]
 
