@@ -1,5 +1,6 @@
 # -*- coding: utf-8 *-*
 
+
 import sys
 import time
 import smtplib
@@ -8,7 +9,9 @@ import tempfile
 import os
 import codecs
 
+
 from settings import Settings
+
 
 MESSAGE_FORMAT = u"Subject: Orders info\n\n{0}"
 OUTPUT_OK = "Successfully sent email"
@@ -16,10 +19,11 @@ OUTPUT_ERROR = "Error: unable to send email"
 
 
 class OrderMailSender:
-    def __init__(self, orders, mails, short=False, verbose=True):
+    def __init__(self, orders, mails, short=False, verbose=True, last_event=False):
         self._orders = orders
         self._short = short
         self._verbose = verbose
+        self._last_event = last_event
 
         self._settings = Settings(constants.SETTINGS_FILE)
 
@@ -60,8 +64,13 @@ class OrderMailSender:
 
     def print_events(self, mail_file, event_list):
         self.print_head(mail_file)
+        if self._last_event:
+            self.print_event(mail_file, event_list[-1])
+            return
+
         for event in event_list:
             self.print_event(mail_file, event)
+
 
     def print_head(self, mail_file):
         if self._short:
@@ -100,6 +109,3 @@ class OrderMailSender:
     def get_message(self, mail_file_name):
         with codecs.open(mail_file_name, encoding="utf-8") as mail_file:
             return MESSAGE_FORMAT.format(mail_file.read())
-
-
-

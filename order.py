@@ -1,6 +1,5 @@
 # -*- coding: utf-8 *-*
 
-
 class NotFoundOrder:
     def __init__(self, code):
         self._code = code
@@ -35,4 +34,5 @@ class SentOrder:
     def get_identifier(self):
         return self._code.get_identifier()
 
-
+    def reorder_events(self):
+        self._events.sort(key= lambda event: event._date)
