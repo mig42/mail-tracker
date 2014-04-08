@@ -1,12 +1,14 @@
 # -*- coding: utf-8 *-*
 
+import sys
 import getopt
 import os.path
+
+import output
 
 from correosclient import CorreosClient
 from netherlandspostclient import NetherlandsPostClient
 from codeparser import CodeParser
-from ordermailsender import *
 
 
 USAGE_MESSAGE = \
@@ -82,9 +84,10 @@ def main(argv=None):
             print ""
 
         if mail == "":
-            printer = OrderPrinter(orders, short, verbose, last_event)
+            printer = output.OrderPrinter(orders, short, verbose, last_event)
         else:
-            printer = OrderMailSender(orders, parse_addresses(mail), short, verbose, last_event)
+            printer = output.OrderMailSender(
+                orders, parse_addresses(mail), short, verbose, last_event)
         printer.execute()
 
     except Usage, err:
