@@ -101,10 +101,11 @@ class HtmlWriter:
                 continue
 
             self.add_line(
-                text, "<table> <caption>Order '{0}' </caption>", order.get_identifier())
+                text, "<table rules=\"all\" border=\"1\" style=\"width:1000px\">"
+                      " <caption>Order '{0}' </caption>", order.get_identifier())
 
             text.extend(self.get_events(order.get_events()))
-            self.add_line(text, "</table>")
+            self.add_line(text, "</table><br/><br/>")
 
         return "\n".join(text)
 
@@ -184,11 +185,11 @@ class OrderMailSender:
         self._message["To"] = COMMASPACE.join(mails)
 
     def execute(self):
-        plain_writer = PlainTextWriter(self._short, self._verbose, self._last_event)
+        plain_writer = PlainTextWriter(self._short, True, self._last_event)
         plain_message = plain_writer.write_orders(self._orders)
         self._message.attach(MIMEText(plain_message, "plain", "utf-8"))
 
-        html_writer = HtmlWriter(self._short, self._verbose, self._last_event)
+        html_writer = HtmlWriter(self._short, True, self._last_event)
         self._message.attach(MIMEText(html_writer.write_orders(self._orders), "html", "utf-8"))
 
         if self._verbose:
