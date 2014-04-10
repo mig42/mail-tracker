@@ -97,12 +97,14 @@ class HtmlWriter:
         text = []
         for order in orders:
             if not order.exists():
-                self.add_line(text, "Order '{0}' does not exist.\n", order.get_identifier())
+                self.add_line(text, "Order '{0}' does not exist.<br/>", order.get_identifier())
                 continue
 
-            self.add_line(text, "Order '{0}':", order.get_identifier())
+            self.add_line(
+                text, "Order '{0}':<br/><div class=\"Table\">", order.get_identifier())
 
             text.extend(self.get_events(order.get_events()))
+            self.add_line(text, "</div>")
 
         return "\n".join(text)
 
@@ -127,14 +129,20 @@ class HtmlWriter:
     def add_event(self, text, event):
         if self._short:
             self.add_line(text,
-                          u"  {0: <20} | {1}\n",
+                          u"<div class=\"Row\"> "
+                          u"<div class=\"Cell\"> <p> {0: <20} </p></div>"
+                          u" <div class=\"Cell\"><p>{1}</p></div></div>",
                           time.strftime(constants.LONG_DATE_FORMAT,
                                         event.get_date()),
                           event.get_text())
             return
 
         self.add_line(text,
-                      u"  {0: <20} | {1: <35} | {2: <50} | {3}\n",
+                      u"<div class=\"Row\"> "
+                      u"<div class=\"Cell\"><p>  {0: <20} </p></div> "
+                      u"<div class=\"Cell\"> <p>{1: <35} </p></div>"
+                      u"<div class=\"Cell\"> <p>{2: <50} </p></div> "
+                      u"<div class=\"Cell\"> <p> {3}</p></div></div>",
                       time.strftime(constants.LONG_DATE_FORMAT, event.get_date()),
             event.get_text(),
             event.get_description(),
@@ -142,10 +150,17 @@ class HtmlWriter:
 
     def add_header(self, text):
         if self._short:
-            self.add_line(text, "  {0: ^20} | {1}\n", "Date/time", "Status")
+            self.add_line(text, "<div class=\"Heading\">"
+                                "<div class=\"Cell\"> <p>{0: ^20} </p></div>"
+                                "<div class=\"Cell\"> <p> {1}</p></div></div>",
+                          "Date/time", "Status")
             return
 
-        self.add_line(text, "  {0: ^20} | {1: ^35} | {2: ^50} | {3}\n",
+        self.add_line(text, "<div class=\"Heading\">"
+                            "<div class=\"Cell\"><p>{0: ^20} </p></div>"
+                            "<div class=\"Cell\"> <p> {1: ^35} </p></div>"
+                            "<div class=\"Cell\"> <p> {2: ^50} </p></div>"
+                            "<div class=\"Cell\"> <p> {3}</p></div></div>",
                       "Date/time", "Status", "Description", "Position")
 
     def add_line(self, list, text, *args):
