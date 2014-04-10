@@ -101,10 +101,10 @@ class HtmlWriter:
                 continue
 
             self.add_line(
-                text, "Order '{0}':<br/><div class=\"Table\">", order.get_identifier())
+                text, "<table> <caption>Order '{0}' </caption>", order.get_identifier())
 
             text.extend(self.get_events(order.get_events()))
-            self.add_line(text, "</div>")
+            self.add_line(text, "</table>")
 
         return "\n".join(text)
 
@@ -128,21 +128,19 @@ class HtmlWriter:
 
     def add_event(self, text, event):
         if self._short:
-            self.add_line(text,
-                          u"<div class=\"Row\"> "
-                          u"<div class=\"Cell\"> <p> {0: <20} </p></div>"
-                          u" <div class=\"Cell\"><p>{1}</p></div></div>",
+            self.add_line(text, u"<tr> "
+                                u"<td>  {0: <20}  </td>"
+                                u"<td>  {1}       </td>"
+                                u" </tr>",
                           time.strftime(constants.LONG_DATE_FORMAT,
-                                        event.get_date()),
-                          event.get_text())
+                                        event.get_date()), event.get_text())
             return
 
-        self.add_line(text,
-                      u"<div class=\"Row\"> "
-                      u"<div class=\"Cell\"><p>  {0: <20} </p></div> "
-                      u"<div class=\"Cell\"> <p>{1: <35} </p></div>"
-                      u"<div class=\"Cell\"> <p>{2: <50} </p></div> "
-                      u"<div class=\"Cell\"> <p> {3}</p></div></div>",
+        self.add_line(text, u"<tr>"
+                            u"<td>  {0: <20}  </td>"
+                            u"<td>  {1: <35}  </td>"
+                            u"<td>  {2: <50}  </td>"
+                            u"<td>  {3}  </td></tr>",
                       time.strftime(constants.LONG_DATE_FORMAT, event.get_date()),
             event.get_text(),
             event.get_description(),
@@ -150,17 +148,19 @@ class HtmlWriter:
 
     def add_header(self, text):
         if self._short:
-            self.add_line(text, "<div class=\"Heading\">"
-                                "<div class=\"Cell\"> <p>{0: ^20} </p></div>"
-                                "<div class=\"Cell\"> <p> {1}</p></div></div>",
+            self.add_line(text, "<tr>"
+                                "<th scope=\"col\">  {0: ^20}  </th>"
+                                "<th scope=\"col\">  {1}  </th>"
+                                "</tr>",
                           "Date/time", "Status")
             return
 
-        self.add_line(text, "<div class=\"Heading\">"
-                            "<div class=\"Cell\"><p>{0: ^20} </p></div>"
-                            "<div class=\"Cell\"> <p> {1: ^35} </p></div>"
-                            "<div class=\"Cell\"> <p> {2: ^50} </p></div>"
-                            "<div class=\"Cell\"> <p> {3}</p></div></div>",
+        self.add_line(text, "<tr>"
+                            "<th scope=\"col\">  {0: ^20}  </th>"
+                            "<th scope=\"col\">  {1: ^35}  </th>"
+                            "<th scope=\"col\">  {2: ^50}  </th>"
+                            "<th scope=\"col\">  {3}  </th>"
+                            "</tr>",
                       "Date/time", "Status", "Description", "Position")
 
     def add_line(self, list, text, *args):
