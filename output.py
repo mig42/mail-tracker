@@ -101,11 +101,13 @@ class HtmlWriter:
                 continue
 
             self.add_line(
-                text, "<table rules=\"all\" border=\"1\" style=\"width:1000px\">"
-                      " <caption>Order '{0}' </caption>", order.get_identifier())
+                text, "<div class=\"Table\" style=\"display: table\">"
+                      "<div class=\"Title\" style=\"display: table-caption;"
+                      "text-align: center;font-weight: bold;font-size: larger\">"
+                      "<p>Order '{0}'</p> </div>", order.get_identifier())
 
             text.extend(self.get_events(order.get_events()))
-            self.add_line(text, "</table><br/><br/>")
+            self.add_line(text, "</div>")
 
         return "\n".join(text)
 
@@ -129,39 +131,70 @@ class HtmlWriter:
 
     def add_event(self, text, event):
         if self._short:
-            self.add_line(text, u"<tr> "
-                                u"<td>  {0: <20}  </td>"
-                                u"<td>  {1}       </td>"
-                                u" </tr>",
+            self.add_line(text,
+                          u"<div class=\"Row\" style=\"display: table-row\">"
+                          u"<div class=\"Cell\" style=\"display: table-cell;border:"
+                          u" solid;border-width: thin;padding-left: 5px;"
+                          u"padding-right: 5px\"><p>{0: <20}</p></div> "
+                          u"<div class=\"Cell\" style=\"display: table-cell;border:"
+                          u" solid;border-width: thin;padding-left: 5px;"
+                          u"padding-right: 5px\"><p>{1}</p></div></div> ",
                           time.strftime(constants.LONG_DATE_FORMAT,
                                         event.get_date()), event.get_text())
             return
 
-        self.add_line(text, u"<tr>"
-                            u"<td>  {0: <20}  </td>"
-                            u"<td>  {1: <35}  </td>"
-                            u"<td>  {2: <50}  </td>"
-                            u"<td>  {3}  </td></tr>",
+        self.add_line(text,
+                      u"<div class=\"Row\" style=\"display: table-row\">"
+                      u"<div class=\"Cell\" style=\"display: table-cell;border:"
+                      u" solid;border-width: thin;padding-left: 5px;"
+                      u"padding-right: 5px\"><p>{0: <20}</p></div> "
+                      u"<div class=\"Cell\" style=\"display: table-cell;border:"
+                      u" solid;border-width: thin;padding-left: 5px;"
+                      u"padding-right: 5px\"><p>{1: <35}</p></div> "
+                      u"<div class=\"Cell\" style=\"display: table-cell;border:"
+                      u" solid;border-width: thin;padding-left: 5px;"
+                      u"padding-right: 5px\"><p>{2: <50}</p></div> "
+                      u"<div class=\"Cell\" style=\"display: table-cell;border:"
+                      u" solid;border-width: thin;padding-left: 5px;"
+                      u"padding-right: 5px\"><p>{3}</p></div> </div> ",
                       time.strftime(constants.LONG_DATE_FORMAT, event.get_date()),
-            event.get_text(),
-            event.get_description(),
-            event.get_location())
+                      event.get_text(),
+                      event.get_description(),
+                      event.get_location())
 
     def add_header(self, text):
         if self._short:
-            self.add_line(text, "<tr>"
-                                "<th scope=\"col\">  {0: ^20}  </th>"
-                                "<th scope=\"col\">  {1}  </th>"
-                                "</tr>",
+            self.add_line(text, "<div class=\"Heading\" style=\"display:"
+                                " table-row;font-weight: bold;text-align:"
+                                " center\"><div class=\"Cell\" style=\"display:"
+                                " table-cell;border: solid;border-width: thin;"
+                                "padding-left: 5px;padding-right: 5px\">"
+                                "<p><p>{0: ^20} </p> </div>"
+                                "<div class=\"Cell\" style=\"display:"
+                                "table-cell;border: solid;border-width: thin;"
+                                "padding-left: 5px;padding-right: 5px\">"
+                                "<p><p> {1} </p> </div></div>",
                           "Date/time", "Status")
             return
 
-        self.add_line(text, "<tr>"
-                            "<th scope=\"col\">  {0: ^20}  </th>"
-                            "<th scope=\"col\">  {1: ^35}  </th>"
-                            "<th scope=\"col\">  {2: ^50}  </th>"
-                            "<th scope=\"col\">  {3}  </th>"
-                            "</tr>",
+        self.add_line(text, "<div class=\"Heading\" style=\"display:"
+                            " table-row;font-weight: bold;text-align:"
+                            " center\"><div class=\"Cell\" style=\"display:"
+                            " table-cell;border: solid;border-width: thin;"
+                            "padding-left: 5px;padding-right: 5px\">"
+                            "<p><p>{0: ^20} </p> </div>"
+                            "<div class=\"Cell\" style=\"display:"
+                            "table-cell;border: solid;border-width: thin;"
+                            "padding-left: 5px;padding-right: 5px\">"
+                            "<p><p> {1: ^35} </p> </div>"
+                            "<div class=\"Cell\" style=\"display:"
+                            "table-cell;border: solid;border-width: thin;"
+                            "padding-left: 5px;padding-right: 5px\">"
+                            "<p><p> {2: ^50} </p> </div>"
+                            "<div class=\"Cell\" style=\"display:"
+                            "table-cell;border: solid;border-width: thin;"
+                            "padding-left: 5px;padding-right: 5px\">"
+                            "<p><p> {3} </p> </div></div>",
                       "Date/time", "Status", "Description", "Position")
 
     def add_line(self, list, text, *args):
