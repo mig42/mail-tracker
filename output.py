@@ -19,6 +19,22 @@ OUTPUT_ERROR = "Error: unable to send email"
 FROM_ADDRESS = "mailtracker@gmail.com"
 COMMASPACE = ", "
 
+TABLE_CAPTION_HTML = """
+<div style="display: table-caption; text-align: center;font-weight: bold;font-size: larger">
+  <p>Order '{0}'</p>
+</div>"""
+
+TABLE_ROW_HTML = u"<div style=\"display: table-row\">"
+
+TABLE_TITLE_ROW_HTML = "<div style=\"display: table-row;font-weight: bold;text-align: center\">"
+
+TABLE_END_ROW_HTML = "</div>"
+
+TABLE_CELL_HTML = u"""
+<div style="display: table-cell;border: solid;border-width: thin;padding-left:5px;padding-right:5px">
+  <p>{0}</p>
+</div>"""
+
 
 class PlainTextWriter:
     def __init__(self, short=False, verbose=True, last_event=False):
@@ -100,11 +116,8 @@ class HtmlWriter:
                 self.add_line(text, "Order '{0}' does not exist.<br/>", order.get_identifier())
                 continue
 
-            self.add_line(
-                text, "<div style=\"display: table\">"
-                      "<div style=\"display: table-caption;"
-                      "text-align: center;font-weight: bold;font-size: larger\">"
-                      "<p>Order '{0}'</p> </div>", order.get_identifier())
+            self.add_line(text, "<div style=\"display: table\">")
+            self.add_line(text, TABLE_CAPTION_HTML, order.get_identifier())
 
             text.extend(self.get_events(order.get_events()))
             self.add_line(text, "</div>")
@@ -129,73 +142,40 @@ class HtmlWriter:
 
         return text
 
-    def add_event(self, text, event):
-        if self._short:
-            self.add_line(text,
-                          u"<div style=\"display: table-row\">"
-                          u"<div style=\"display: table-cell;border:"
-                          u" solid;border-width: thin;padding-left: 5px;"
-                          u"padding-right: 5px\"><p>{0}</p></div> "
-                          u"<div style=\"display: table-cell;border:"
-                          u" solid;border-width: thin;padding-left: 5px;"
-                          u"padding-right: 5px\"><p>{1}</p></div></div> ",
-                          time.strftime(constants.LONG_DATE_FORMAT,
-                                        event.get_date()), event.get_text())
-            return
-
-        self.add_line(text,
-                      u"<div style=\"display: table-row\">"
-                      u"<div style=\"display: table-cell;border:"
-                      u" solid;border-width: thin;padding-left: 5px;"
-                      u"padding-right: 5px\"><p>{0}</p></div> "
-                      u"<div style=\"display: table-cell;border:"
-                      u" solid;border-width: thin;padding-left: 5px;"
-                      u"padding-right: 5px\"><p>{1}</p></div> "
-                      u"<div style=\"display: table-cell;border:"
-                      u" solid;border-width: thin;padding-left: 5px;"
-                      u"padding-right: 5px\"><p>{2}</p></div> "
-                      u"<div style=\"display: table-cell;border:"
-                      u" solid;border-width: thin;padding-left: 5px;"
-                      u"padding-right: 5px\"><p>{3}</p></div> </div> ",
-                      time.strftime(constants.LONG_DATE_FORMAT, event.get_date()),
-                      event.get_text(),
-                      event.get_description(),
-                      event.get_location())
-
     def add_header(self, text):
-        if self._short:
-            self.add_line(text, "<div style=\"display:"
-                                " table-row;font-weight: bold;text-align:"
-                                " center\"><div style=\"display:"
-                                " table-cell;border: solid;border-width: thin;"
-                                "padding-left: 5px;padding-right: 5px\">"
-                                "<p><p>{0} </p> </div>"
-                                "<div style=\"display:"
-                                "table-cell;border: solid;border-width: thin;"
-                                "padding-left: 5px;padding-right: 5px\">"
-                                "<p><p> {1} </p> </div></div>",
-                          "Date/time", "Status")
-            return
+        self.begin_title_row(text)
 
-        self.add_line(text, "<div style=\"display:"
-                            " table-row;font-weight: bold;text-align:"
-                            " center\"><div style=\"display:"
-                            " table-cell;border: solid;border-width: thin;"
-                            "padding-left: 5px;padding-right: 5px\">"
-                            "<p><p>{0} </p> </div>"
-                            "<div style=\"display:"
-                            "table-cell;border: solid;border-width: thin;"
-                            "padding-left: 5px;padding-right: 5px\">"
-                            "<p><p> {1} </p> </div>"
-                            "<div style=\"display:"
-                            "table-cell;border: solid;border-width: thin;"
-                            "padding-left: 5px;padding-right: 5px\">"
-                            "<p><p> {2} </p> </div>"
-                            "<div style=\"display:"
-                            "table-cell;border: solid;border-width: thin;"
-                            "padding-left: 5px;padding-right: 5px\">"
-                            "<p><p> {3} </p> </div></div>",
-                      "Date/time", "Status", "Description", "Position")
+        self.add_cell(text, "Date/Time")
+        self.add_cell(text, "Status")
+
+        if not self._short:
+            self.add_cell(text, "Description")
+            self.add_cell(text, "Position")
+
+        self.end_row(text)
+
+    def add_event(self, text, event):
+        self.begin_row(text)
+
+        self.add_cell(text, time.strftime(constants.LONG_DATE_FORMAT, event.get_date()))
+        self.add_cell(text, event.get_text())
+        if not self._short:
+            self.add_cell(text, event.get_description())
+            self.add_cell(text, event.get_location())
+
+        self.end_row(text)
+
+    def begin_row(self, text):
+        self.add_line(text, TABLE_ROW_HTML)
+
+    def begin_title_row(self, text):
+        self.add_line(text, TABLE_TITLE_ROW_HTML)
+
+    def end_row(self, text):
+        self.add_line(text, TABLE_END_ROW_HTML)
+
+    def add_cell(self, text, cell_data):
+        self.add_line(text, TABLE_CELL_HTML, cell_data)
 
     def add_line(self, lines_list, text, *args):
         if not self._verbose:
