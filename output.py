@@ -19,19 +19,25 @@ OUTPUT_ERROR = "Error: unable to send email"
 FROM_ADDRESS = "mailtracker@gmail.com"
 COMMASPACE = ", "
 
-INFO_LINE_HTML = "<div style=\"font-style: italic;\">Order '{0}'{1}</div>"
-
 TABLE_START_HTML = "<div style=\"display: table\">"
 TABLE_END_HTML = "</div>"
+SEPARATOR_HTML = "<div style\"margin: 10px 0; padding: 10px 0\"><hr /></div>"
 
 TABLE_CAPTION_HTML = """
 <div style="display: table-caption; text-align: center;font-weight: bold;font-size: larger">
-  <p>{0}</p>
+  <p>Order '{0}'</p>
+</div>"""
+
+CAPTION_HTML = """
+<div style="text-align: center; font-weight: bold; font-size: larger">
+  <p>Order '{0}' does not exist</p>
 </div>"""
 
 TABLE_ROW_HTML = "<div style=\"display: table-row\">"
 TABLE_TITLE_ROW_HTML = "<div style=\"display: table-row;font-weight: bold;text-align: center\">"
 TABLE_END_ROW_HTML = "</div>"
+
+INFO_LINE_HTML = "<div style=\"font-style: italic;\"{0}</div>"
 
 TABLE_CELL_HTML = u"""
 <div style="display: table-cell;border: solid;border-width: thin;padding-left:5px;padding-right:5px">
@@ -115,7 +121,8 @@ class HtmlWriter:
         self._text = []
         for order in orders:
             if not order.exists():
-                self.add_line(TABLE_CAPTION_HTML, order.get_identifier(), " does not exist")
+                self.add_line(CAPTION_HTML, order.get_identifier())
+                self.add_separator()
                 continue
 
             self.begin_table()
@@ -168,6 +175,9 @@ class HtmlWriter:
 
     def end_table(self):
         self.add_line(TABLE_END_HTML)
+
+    def add_separator(self):
+        self.add_line(SEPARATOR_HTML)
 
     def begin_row(self):
         self.add_line(TABLE_ROW_HTML)
