@@ -29,7 +29,7 @@ TABLE_CAPTION_HTML = """
   <p>{0}</p>
 </div>"""
 
-TABLE_ROW_HTML = u"<div style=\"display: table-row\">"
+TABLE_ROW_HTML = "<div style=\"display: table-row\">"
 TABLE_TITLE_ROW_HTML = "<div style=\"display: table-row;font-weight: bold;text-align: center\">"
 TABLE_END_ROW_HTML = "</div>"
 
