@@ -19,15 +19,18 @@ OUTPUT_ERROR = "Error: unable to send email"
 FROM_ADDRESS = "mailtracker@gmail.com"
 COMMASPACE = ", "
 
+INFO_LINE_HTML = "<div style=\"font-style: italic;\">Order '{0}'{1}</div>"
+
+TABLE_START_HTML = "<div style=\"display: table\">"
+TABLE_END_HTML = "</div>"
+
 TABLE_CAPTION_HTML = """
 <div style="display: table-caption; text-align: center;font-weight: bold;font-size: larger">
-  <p>Order '{0}'</p>
+  <p>{0}</p>
 </div>"""
 
 TABLE_ROW_HTML = u"<div style=\"display: table-row\">"
-
 TABLE_TITLE_ROW_HTML = "<div style=\"display: table-row;font-weight: bold;text-align: center\">"
-
 TABLE_END_ROW_HTML = "</div>"
 
 TABLE_CELL_HTML = u"""
@@ -41,66 +44,64 @@ class PlainTextWriter:
         self._short = short
         self._verbose = verbose
         self._last_event = last_event
+        self._text = []
 
     def write_orders(self, orders):
-        text = []
+        self._text = []
         for order in orders:
             if not order.exists():
-                self.add_line(text, "Order '{0}' does not exist.\n", order.get_identifier())
+                self.add_line("Order '{0}' does not exist.\n", order.get_identifier())
                 continue
 
-            self.add_line(text, "Order '{0}':", order.get_identifier())
+            self.add_line("Order '{0}':", order.get_identifier())
 
-            text.extend(self.get_events(order.get_events()))
+            self.add_events(order.get_events())
 
-        return "\n".join(text)
+        return "\n".join(self._text)
 
-    def get_events(self, events):
-        text = []
+    def add_events(self, events):
 
         if events is None or len(events) == 0:
-            self.add_line(text, "  No registered events yet.")
-            return text
+            self.add_line("  No registered events yet.")
+            return
 
-        self.add_header(text)
+        self.add_header()
 
         if self._last_event:
-            self.add_event(text, events[-1])
-            return text
+            self.add_event(events[-1])
+            return
 
         for event in events:
-            self.add_event(text, event)
+            self.add_event(event)
 
-        return text
+        return
 
-    def add_event(self, text, event):
+    def add_event(self, event):
         if self._short:
-            self.add_line(text,
-                          u"  {0: <20} | {1}\n",
+            self.add_line(u"  {0: <20} | {1}\n",
                           time.strftime(constants.LONG_DATE_FORMAT,
                                         event.get_date()),
                           event.get_text())
             return
 
-        self.add_line(text,
-                      u"  {0: <20} | {1: <35} | {2: <50} | {3}\n",
+        self.add_line(u"  {0: <20} | {1: <35} | {2: <50} | {3}\n",
                       time.strftime(constants.LONG_DATE_FORMAT, event.get_date()),
                       event.get_text(),
                       event.get_description(),
                       event.get_location())
 
-    def add_header(self, text):
+    def add_header(self):
         if self._short:
-            self.add_line(text, "  {0: ^20} | {1}\n", "Date/time", "Status")
+            self.add_line("  {0: ^20} | {1}\n", "Date/time", "Status")
             return
 
-        self.add_line(text, "  {0: ^20} | {1: ^35} | {2: ^50} | {3}\n",
+        self.add_line("  {0: ^20} | {1: ^35} | {2: ^50} | {3}\n",
                       "Date/time", "Status", "Description", "Position")
 
-    def add_line(self, lines_list, text, *args):
+    def add_line(self, text, *args):
         if not self._verbose:
             return
-        lines_list.append(text.format(*args).encode("utf-8"))
+        self._text.append(text.format(*args).encode("utf-8"))
 
 
 class HtmlWriter:
@@ -108,79 +109,83 @@ class HtmlWriter:
         self._short = short
         self._verbose = verbose
         self._last_event = last_event
+        self._text = []
 
     def write_orders(self, orders):
-        text = []
+        self._text = []
         for order in orders:
             if not order.exists():
-                self.add_line(text, "Order '{0}' does not exist.<br/>", order.get_identifier())
+                self.add_line(TABLE_CAPTION_HTML, order.get_identifier(), " does not exist")
                 continue
 
-            self.add_line(text, "<div style=\"display: table\">")
-            self.add_line(text, TABLE_CAPTION_HTML, order.get_identifier())
+            self.begin_table()
+            self.add_line(TABLE_CAPTION_HTML, order.get_identifier())
 
-            text.extend(self.get_events(order.get_events()))
-            self.add_line(text, "</div>")
+            self.add_events(order.get_events())
+            self.end_table()
 
-        return "\n".join(text)
+        return "\n".join(self._text)
 
-    def get_events(self, events):
-        text = []
-
+    def add_events(self, events):
         if events is None or len(events) == 0:
-            self.add_line(text, "  No registered events yet.")
-            return text
+            self.add_info_line("No registered events yet.")
+            return
 
-        self.add_header(text)
+        self.add_header()
 
         if self._last_event:
-            self.add_event(text, events[-1])
-            return text
+            self.add_event(events[-1])
+            return
 
         for event in events:
-            self.add_event(text, event)
+            self.add_event(event)
 
-        return text
+    def add_header(self):
+        self.begin_title_row()
 
-    def add_header(self, text):
-        self.begin_title_row(text)
-
-        self.add_cell(text, "Date/Time")
-        self.add_cell(text, "Status")
+        self.add_cell("Date/Time")
+        self.add_cell("Status")
 
         if not self._short:
-            self.add_cell(text, "Description")
-            self.add_cell(text, "Position")
+            self.add_cell("Description")
+            self.add_cell("Position")
 
-        self.end_row(text)
+        self.end_row()
 
-    def add_event(self, text, event):
-        self.begin_row(text)
+    def add_event(self, event):
+        self.begin_row()
 
-        self.add_cell(text, time.strftime(constants.LONG_DATE_FORMAT, event.get_date()))
-        self.add_cell(text, event.get_text())
+        self.add_cell(time.strftime(constants.LONG_DATE_FORMAT, event.get_date()))
+        self.add_cell(event.get_text())
         if not self._short:
-            self.add_cell(text, event.get_description())
-            self.add_cell(text, event.get_location())
+            self.add_cell(event.get_description())
+            self.add_cell(event.get_location())
 
-        self.end_row(text)
+        self.end_row()
 
-    def begin_row(self, text):
-        self.add_line(text, TABLE_ROW_HTML)
+    def begin_table(self):
+        self.add_line(TABLE_START_HTML)
 
-    def begin_title_row(self, text):
-        self.add_line(text, TABLE_TITLE_ROW_HTML)
+    def end_table(self):
+        self.add_line(TABLE_END_HTML)
 
-    def end_row(self, text):
-        self.add_line(text, TABLE_END_ROW_HTML)
+    def begin_row(self):
+        self.add_line(TABLE_ROW_HTML)
 
-    def add_cell(self, text, cell_data):
-        self.add_line(text, TABLE_CELL_HTML, cell_data)
+    def begin_title_row(self):
+        self.add_line(TABLE_TITLE_ROW_HTML)
 
-    def add_line(self, lines_list, text, *args):
-        if not self._verbose:
-            return
-        lines_list.append(text.format(*args).encode("utf-8"))
+    def end_row(self):
+        self.add_line(TABLE_END_ROW_HTML)
+
+    def add_cell(self, cell_data):
+        self.add_line(TABLE_CELL_HTML, cell_data)
+
+    def add_info_line(self, data):
+        self.add_line(INFO_LINE_HTML, data)
+
+    def add_line(self, text, *args):
+        self._text.append(text.format(*args).encode("utf-8"))
 
 
 class OrderMailSender:
