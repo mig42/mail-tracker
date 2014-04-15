@@ -1,13 +1,14 @@
 # -*- coding: utf-8 *-*
 
 import sys
-from urllib import urlencode
-from urllib2 import urlopen
 import time
+from urllib import urlencode
+import urllib2
 import xml.etree.ElementTree as ElementTree
 
 import order
 import event
+
 
 WEB_SERVICE_ENDPOINT = "https://aplicacionesweb.correos.es/localizadorenvios/track.asp"
 
@@ -19,17 +20,26 @@ class CorreosClient:
     def get_order(self, code):
         content = self.query(code.get_code())
         if content is None or content == "":
-            return None
+            return order.NotFoundOrder(code)
         return self._parser.parse(content, code)
 
     def query(self, code):
+        connection = None
         params = urlencode(self.build_params(code))
-        response = urlopen(WEB_SERVICE_ENDPOINT, params)
-        data = response.read()
-        separated_data = data.split("##")
-        if len(separated_data) < 2:
+        try:
+            connection = urllib2.urlopen(WEB_SERVICE_ENDPOINT, params)
+            data = connection.read()
+            separated_data = data.split("##")
+            if len(separated_data) < 2:
+                return ""
+            return separated_data[1].split("**", 1)[0]
+        except urllib2.URLError:
             return ""
-        return separated_data[1].split("**", 1)[0]
+        except:
+            raise
+        finally:
+            if connection is not None:
+                connection.close()
 
     def build_params(self, code):
         return {"numero": code, "accion": "LocalizaUno"}
