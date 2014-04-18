@@ -13,6 +13,15 @@ class NotFoundOrder:
     def get_identifier(self):
         return self._code.get_identifier()
 
+    def add_event(self):
+        pass
+
+    def get_events(self):
+        return []
+
+    def reorder_events(self):
+        pass
+
 
 class SentOrder:
     def __init__(self, code):

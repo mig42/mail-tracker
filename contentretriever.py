@@ -4,11 +4,12 @@ import sys
 import getopt
 import os.path
 
+import output
+
 from correosclient import CorreosClient
 from netherlandspostclient import NetherlandsPostClient
-from orderprinter import OrderPrinter
 from codeparser import CodeParser
-from ordermailsender import OrderMailSender
+
 
 USAGE_MESSAGE = \
     """Usage: {0} [CODE]... [OPTION]...
@@ -79,16 +80,15 @@ def main(argv=None):
             if order.exists():
                 order.reorder_events()
 
-
-
         if verbose:
             print ""
 
         if mail == "":
-            printer = OrderPrinter(orders, short, verbose, last_event)
+            printer = output.OrderPrinter(orders, short, verbose, last_event)
         else:
-            printer = OrderMailSender(orders, parse_addresses(mail), short, verbose, last_event)
-        printer.flush_output()
+            printer = output.OrderMailSender(
+                orders, parse_addresses(mail), short, verbose, last_event)
+        printer.execute()
 
     except Usage, err:
         print >> sys.stderr, err.msg
