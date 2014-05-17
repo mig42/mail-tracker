@@ -30,9 +30,10 @@ class CorreosClient:
             connection = urllib2.urlopen(WEB_SERVICE_ENDPOINT, params)
             data = connection.read()
             separated_data = data.split("##")
-            if len(separated_data) < 2:
-                return ""
-            return separated_data[1].split("**", 1)[0]
+            for chunk in separated_data:
+                if chunk.startswith("<?xml"):
+                    return chunk.split("**", 1)[0]
+            return ""
         except urllib2.URLError:
             return ""
         except:
