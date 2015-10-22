@@ -66,17 +66,20 @@ class CorreosParser:
         sent_order = order.SentOrder(code)
         event_list = soup.findAll('table')[0].findAll('tr')[2:]
         
-        for html_event in event_list:
-            if len(html_event) == 0:
-                continue
-            date_string = html_event.findAll('td')[0].contents
-            date = time.strptime(date_string[0], "\r\t\t\t\t%d/%m/%Y")
-            description_html = html_event.findAll('td')[1]
-            description = description_html.span['title']
-            text =description_html.contents[1].contents[0].split("\r")[0]
-            new_event = event.Event(date, text, description, None)
+        try:
+            for html_event in event_list:
+                if len(html_event) == 0:
+                    continue
+                date_string = html_event.findAll('td')[0].contents
+                date = time.strptime(date_string[0], "\r\t\t\t\t%d/%m/%Y")
+                description_html = html_event.findAll('td')[1]
+                description = description_html.span['title']
+                text =description_html.contents[1].contents[0].split("\r")[0]
+                new_event = event.Event(date, text, description, None)
 
-            sent_order.add_event(new_event)
+                sent_order.add_event(new_event)
+        except:
+            return order.NotFoundOrder(code)
 
         return sent_order
 
