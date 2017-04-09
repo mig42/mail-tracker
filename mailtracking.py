@@ -4,11 +4,11 @@ import sys
 import getopt
 import os.path
 
-import output
 
-from correosclient import CorreosClient
-from netherlandspostclient import NetherlandsPostClient
-from codeparser import CodeParser
+from mailtracking import output
+from mailtracking.correosclient import CorreosClient
+from mailtracking.netherlandspostclient import NetherlandsPostClient
+from mailtracking.codeparser import CodeParser
 
 
 USAGE_MESSAGE = \
