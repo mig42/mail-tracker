@@ -26,7 +26,7 @@ Several options are available using the command line:
 
 ## Docker execution
 ```bash
-docker run --rm -v $(pwd)/codes.txt:/usr/src/app/codes.txt:ro pando85/mailtracker
+docker run --rm -v $(pwd)/codes.txt:/usr/src/app/codes.txt:ro pando85/mailtracker python mailtracking.py -f codes.txt
 ```
 
 ## TODO
