@@ -24,6 +24,11 @@ Several options are available using the command line:
 
 **-l**, **--last-event**: Print only the last event for each order.
 
+## Docker execution
+```bash
+docker run --rm -v $(pwd)/codes.txt:/usr/src/app/codes.txt:ro pando85/mailtracker
+```
+
 ## TODO
 - tourline express
 - mrw
