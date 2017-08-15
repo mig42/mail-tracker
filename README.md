@@ -8,7 +8,7 @@ A simple application to retrieve delivery tracking information from post compani
 * [GLS](https://www.gls-group.eu)
 
 ## Usage
-    `python contentretriever.py [OPTIONS] [CODE [CODE [...]]]`
+    `python mailtracking.py [OPTIONS] [CODE [CODE [...]]]`
 
 Codes are formed by a tracking code (supplied by the sender or the courier) and an optional identifier, separated by a `#` character.
 
