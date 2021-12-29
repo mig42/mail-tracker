@@ -8,7 +8,7 @@ A simple application to retrieve delivery tracking information from post compani
 * [GLS](https://www.gls-group.eu)
 
 ## Usage
-    `python contentretriever.py [OPTIONS] [CODE [CODE [...]]]`
+    `python mailtracking.py [OPTIONS] [CODE [CODE [...]]]`
 
 Codes are formed by a tracking code (supplied by the sender or the courier) and an optional identifier, separated by a `#` character.
 
@@ -23,4 +23,23 @@ Several options are available using the command line:
 **-m**, **--mail=** `[MAIL-LIST]`: The results will be sent to the specified comma-separated mail addresses. 
 
 **-l**, **--last-event**: Print only the last event for each order.
+
+## Docker execution
+```bash
+docker run --rm -v $(pwd)/codes.txt:/usr/src/app/codes.txt:ro pando85/mailtracker python mailtracking.py -f codes.txt
+```
+
+## TODO
+- tourline express
+- mrw
+- seur
+- chronoexpress
+- ups
+- envialia
+- fedex
+- DHL
+- TNT
+- aramex
+- Parcelforce
+- EMS
 

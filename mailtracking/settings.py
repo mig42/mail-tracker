@@ -28,4 +28,4 @@ class Settings ():
 
 
 def get_settings_file_path(file_name):
-    return os.path.join(os.path.dirname(__file__), file_name)
+    return os.path.join(os.path.dirname(__file__), "../" + file_name)

@@ -4,11 +4,11 @@ import sys
 import getopt
 import os.path
 
-import output
 
-from correosclient import CorreosClient
-from netherlandspostclient import NetherlandsPostClient
-from codeparser import CodeParser
+from mailtracking import output
+from mailtracking.correosclient import CorreosClient
+from mailtracking.netherlandspostclient import NetherlandsPostClient
+from mailtracking.codeparser import CodeParser
 
 
 USAGE_MESSAGE = \
@@ -68,7 +68,13 @@ def main(argv=None):
                 last_event = True
 
         orders = []
-        for code in get_args(args, code_file):
+
+        codes = get_args(args, code_file)
+        if len(codes) == 0:
+            print "Not orders to send"
+            return
+
+        for code in codes:
             if verbose:
                 print "Processing {0}...".format(code.get_identifier())
             try:
